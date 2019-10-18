@@ -9,30 +9,10 @@ class Node {
 
 
 	appendChild(node) {
-		if(this.data > node.data){
-			if(this.left !== null){
-			   if(this.left.data > node.data){
-				  this.left.left = node;
-				  node.parent = this.left;
-			   }else {
-				 this.left.right = node;
-				 node.parent = this.left;
-			   }
-			   return;
-			}
+		if(!this.left){
 			this.left = node;
 			node.parent = this;
-		} else if( this.data < node.data){
-			if(this.right !== null){
-				if(this.right.data > node.data){
-				   this.right.left = node;
-				   node.parent = this.right;
-				}else {
-				  this.right.right = node;
-				  node.parent = this.right;
-				}
-				return;
-			 }
+		} else if(!this.right){
 			this.right = node;
 			node.parent = this;
 		} else {
@@ -60,30 +40,67 @@ class Node {
 	swapWithParent() {
 		if(this.parent === null){ return };
 	
-		if(this.parent.data > this.data){
+		    if(this.parent.right === this){
+			let leftNode = this.left;
+			let rightNode = this.right;	
+			let thisPar = this.parent;
+			let thisParPar = this.parent.parent;
+			let thisParLeft = this.parent.left;
+
+			if(thisParLeft){ thisParLeft.parent = this; }
+			
+			if(thisParPar){ 
+				if(thisParPar.right === thisPar){ thisParPar.right = this; }
+				if(thisParPar.left === thisPar){ thisParPar.left = this; } 
+			 }
+
+			if(this.right){ this.right.parent = thisPar;}
+			if(this.left){  this.left.parent = thisPar;}
+
 			this.right = this.parent;
-			this.parent.left = null;
-			this.parent = this.parent.parent;
-			this.right.parent = this;
+			this.left = thisParLeft;
+			this.parent.parent = this;
 
+			if(thisParPar){ 
+				this.parent = thisParPar;
+			 } else{
+				this.parent = null;
+			}
 
-		} else if(this.parent.data < this.data){
+			thisPar.left  = leftNode;
+			thisPar.right = rightNode;
+
+		} else if(this.parent.left === this){
+			let leftNode = this.left;
+			let rightNode = this.right;	
+			let thisPar = this.parent;
+			let thisParPar = this.parent.parent;
+			let thisParRight = this.parent.right;
+
+			if(thisParRight){ thisParRight.parent = this ; }
+
+			if(thisParPar){ 
+			   if(thisParPar.right === thisPar){ thisParPar.right = this; }
+			   if(thisParPar.left === thisPar){ thisParPar.left = this; } 
+			}
+
+			if(this.right){ this.right.parent = thisPar;}
+			if(this.left) { this.left.parent = thisPar; }
+
+			this.right = thisParRight;
 			this.left = this.parent;
-			this.parent.rights = null;
-			this.parent = this.parent.parent;
-			this.left.parent = this;
+			this.parent.parent = this;
+
+			if(thisParPar){ 
+				this.parent = thisParPar; 
+			}else{
+				this.parent = null;
+			}
+
+			thisPar.left  = leftNode;
+			thisPar.right = rightNode;
 		}
 	}
 }
 
-const root = new Node(42, 15);
-const left = new Node(13, 42);
-const right = new Node(0, 1);
-const childOfLeft = new Node(0, 15);
-
-root.appendChild(left);
-root.appendChild(right);
-left.appendChild(childOfLeft);
-
-left.swapWithParent();
 module.exports = Node;
